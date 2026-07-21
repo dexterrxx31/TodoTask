@@ -221,13 +221,40 @@ body {
 .composer__date svg { width: 19px; height: 19px; flex-shrink: 0; }
 .composer__date:hover { color: var(--accent); background: var(--accent-soft); }
 .composer__date.is-set { color: var(--accent); background: var(--accent-soft); }
-.composer__date-native {
+/* Native date inputs are triggered programmatically via showPicker();
+   keep them functional but fully hidden and appearance-reset so mobile
+   browsers (esp. Samsung Internet) don't paint a stray calendar glyph. */
+.composer__date-native,
+.task__due-native {
   position: absolute;
-  inset: 0;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  border: 0;
   opacity: 0;
-  border: none;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
   pointer-events: none;
-  width: 1px; height: 1px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0;
+}
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .composer__add {
   flex-shrink: 0;
@@ -401,12 +428,6 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
   pointer-events: auto;
 }
 .task.completed .task__due { opacity: 0.5; filter: grayscale(0.4); }
-.task__due-native {
-  position: absolute;
-  width: 1px; height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* Drag handle */
 .task__handle {
