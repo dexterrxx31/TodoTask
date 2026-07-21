@@ -6,9 +6,13 @@
   <meta name="theme-color" content="#0b0b12" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#f4f5fb" media="(prefers-color-scheme: light)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tasks" />
   <meta name="description" content="A modern, minimal todo app. Add, organize and track your tasks." />
   <title>Tasks — Modern To-Do</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -50,16 +54,23 @@
     </section>
 
     <form class="composer" id="todoForm" autocomplete="off">
-      <input
-        id="todoInput"
-        class="composer__input"
-        type="text"
-        placeholder="Add a new task…"
-        aria-label="Add a new task"
-        maxlength="140"
-        enterkeyhint="done"
-        required
-      />
+      <div class="composer__field">
+        <input
+          id="todoInput"
+          class="composer__input"
+          type="text"
+          placeholder="Add a new task…"
+          aria-label="Add a new task"
+          maxlength="140"
+          enterkeyhint="done"
+          required
+        />
+        <button class="composer__date" id="dueBtn" type="button" aria-label="Set due date">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+          <span id="dueBtnLabel"></span>
+          <input type="date" id="dueInput" class="composer__date-native" aria-label="Due date" />
+        </button>
+      </div>
       <button class="composer__add" type="submit" aria-label="Add task">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>

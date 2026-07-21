@@ -172,6 +172,12 @@ body {
   gap: 10px;
   margin-bottom: 16px;
 }
+.composer__field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
 .composer__input {
   flex: 1;
   min-width: 0;
@@ -183,14 +189,45 @@ body {
   -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 15px 18px;
+  padding: 15px 52px 15px 18px;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .composer__input::placeholder { color: var(--text-faint); }
-.composer__input:focus {
+.composer__field:focus-within .composer__input {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.composer__date {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.composer__date svg { width: 19px; height: 19px; flex-shrink: 0; }
+.composer__date:hover { color: var(--accent); background: var(--accent-soft); }
+.composer__date.is-set { color: var(--accent); background: var(--accent-soft); }
+.composer__date-native {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  border: none;
+  pointer-events: none;
+  width: 1px; height: 1px;
 }
 .composer__add {
   flex-shrink: 0;
@@ -270,6 +307,26 @@ body {
 }
 .task.is-removing { opacity: 0; transform: translateX(40px) scale(0.96); }
 
+/* Drag & drop */
+.task.dragging {
+  position: fixed;
+  z-index: 50;
+  margin: 0;
+  cursor: grabbing;
+  box-shadow: 0 26px 50px -14px rgba(30, 24, 90, 0.5);
+  border-color: var(--accent);
+  animation: none;
+  transition: none;
+  pointer-events: none;
+}
+.task-placeholder {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  opacity: 0.6;
+}
+body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+
 @keyframes pop {
   from { opacity: 0; transform: translateY(-8px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -289,9 +346,14 @@ body {
 .task__check svg { width: 15px; height: 15px; stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset 0.3s ease; }
 .task__check:active { transform: scale(0.85); }
 
-.task__label {
+.task__main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.task__label {
   font-size: 1rem;
   line-height: 1.35;
   color: var(--text);
@@ -299,6 +361,71 @@ body {
   cursor: pointer;
   transition: color 0.25s ease;
 }
+
+/* Due badge */
+.task__due {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.task__due svg { width: 13px; height: 13px; }
+.task__due.is-overdue { background: rgba(244, 63, 94, 0.14); color: var(--danger); }
+.task__due.is-today { background: rgba(22, 185, 129, 0.16); color: var(--success); }
+.task__due.is-empty {
+  background: transparent;
+  color: var(--text-faint);
+  border-color: var(--border-strong);
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.task:hover .task__due.is-empty,
+.task:focus-within .task__due.is-empty {
+  opacity: 1;
+  height: auto;
+  padding: 5px 9px;
+  pointer-events: auto;
+}
+.task.completed .task__due { opacity: 0.5; filter: grayscale(0.4); }
+.task__due-native {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Drag handle */
+.task__handle {
+  flex-shrink: 0;
+  width: 30px; height: 34px;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  border-radius: 9px;
+  cursor: grab;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.task__handle svg { width: 18px; height: 18px; }
+.task__handle:hover { color: var(--text-soft); background: var(--accent-soft); }
+.task__handle:active { cursor: grabbing; }
+.task__handle[hidden] { display: none; }
 
 .task__delete {
   flex-shrink: 0;
