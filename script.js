@@ -65,6 +65,14 @@
   // ---------- Date helpers ----------
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
+  // Today as YYYY-MM-DD (local) — used as the min selectable date.
+  function todayISO() {
+    const d = new Date();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${mm}-${dd}`;
+  }
+
   function parseDue(str) {
     // str = 'YYYY-MM-DD' -> local Date at midnight (avoids timezone shift)
     if (!str) return null;
@@ -107,6 +115,7 @@
   function nudgePicker(el) {
     try { el.showPicker(); } catch (_) { /* touch already opened it */ }
   }
+  dueInput.min = todayISO(); // disallow past dates
   dueInput.addEventListener("click", () => nudgePicker(dueInput));
   dueInput.addEventListener("change", () => {
     pendingDue = dueInput.value || null;
@@ -266,13 +275,14 @@
     const native = document.createElement("input");
     native.type = "date";
     native.className = "task__due-native";
+    native.min = todayISO(); // disallow past dates
     if (todo.due) native.value = todo.due;
     native.addEventListener("change", () => setDue(todo.id, native.value));
     native.addEventListener("click", () => nudgePicker(native));
 
     const f = todo.due ? formatDue(todo.due, todo.done) : null;
     if (f) {
-      wrap.classList.add(f.cls);
+      if (f.cls) wrap.classList.add(f.cls); // f.cls is "" for normal future dates
       wrap.innerHTML = CAL_SVG + `<span>${f.label}</span>`;
       native.setAttribute("aria-label", "Due " + f.label + ". Change due date.");
     } else {
