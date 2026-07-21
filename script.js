@@ -101,13 +101,13 @@
   }
 
   // ---------- Composer due picker ----------
-  function openPicker(el) {
-    try { el.showPicker(); } catch { el.click(); }
+  // The date input is a transparent overlay inside its <label>, so a direct
+  // tap opens the OS picker natively (reliable on iOS). On desktop a plain
+  // click won't open it, so nudge with showPicker() when available.
+  function nudgePicker(el) {
+    try { el.showPicker(); } catch (_) { /* touch already opened it */ }
   }
-  dueBtn.addEventListener("click", (e) => {
-    if (e.target === dueInput) return;
-    openPicker(dueInput);
-  });
+  dueInput.addEventListener("click", () => nudgePicker(dueInput));
   dueInput.addEventListener("change", () => {
     pendingDue = dueInput.value || null;
     updateDueBtn();
@@ -260,34 +260,29 @@
   }
 
   function createDueEl(todo) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "task__due";
+    const wrap = document.createElement("label");
+    wrap.className = "task__due";
 
     const native = document.createElement("input");
     native.type = "date";
     native.className = "task__due-native";
-    native.setAttribute("aria-label", "Change due date");
     if (todo.due) native.value = todo.due;
     native.addEventListener("change", () => setDue(todo.id, native.value));
+    native.addEventListener("click", () => nudgePicker(native));
 
     const f = todo.due ? formatDue(todo.due, todo.done) : null;
     if (f) {
-      btn.classList.add(f.cls);
-      btn.innerHTML = CAL_SVG + `<span>${f.label}</span>`;
-      btn.setAttribute("aria-label", "Due " + f.label + ". Tap to change.");
+      wrap.classList.add(f.cls);
+      wrap.innerHTML = CAL_SVG + `<span>${f.label}</span>`;
+      native.setAttribute("aria-label", "Due " + f.label + ". Change due date.");
     } else {
-      btn.classList.add("is-empty");
-      btn.innerHTML = CAL_SVG + `<span>Add date</span>`;
-      btn.setAttribute("aria-label", "Add due date");
+      wrap.classList.add("is-empty");
+      wrap.innerHTML = CAL_SVG + `<span>Add date</span>`;
+      native.setAttribute("aria-label", "Add due date");
     }
 
-    btn.appendChild(native);
-    btn.addEventListener("click", (e) => {
-      if (e.target === native) return;
-      openPicker(native);
-    });
-    return btn;
+    wrap.appendChild(native);
+    return wrap;
   }
 
   function startEdit(main, label, todo) {

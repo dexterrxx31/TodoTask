@@ -218,31 +218,32 @@ body {
   font-weight: 700;
   transition: color 0.2s ease, background 0.2s ease;
 }
+.composer__date { position: absolute; overflow: hidden; }
 .composer__date svg { width: 19px; height: 19px; flex-shrink: 0; }
 .composer__date:hover { color: var(--accent); background: var(--accent-soft); }
 .composer__date.is-set { color: var(--accent); background: var(--accent-soft); }
-/* Native date inputs are triggered programmatically via showPicker();
-   keep them functional but fully hidden and appearance-reset so mobile
-   browsers (esp. Samsung Internet) don't paint a stray calendar glyph. */
+
+/* The native date input is a transparent, full-size overlay so a direct
+   tap opens the OS picker natively (reliable on iOS Safari). Appearance is
+   reset and the picker-indicator glyph hidden so Samsung Internet / Android
+   don't paint a stray broken calendar icon. */
 .composer__date-native,
 .task__due-native {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 1px;
-  height: 1px;
-  padding: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   margin: 0;
+  padding: 0;
   border: 0;
   opacity: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  pointer-events: none;
+  cursor: pointer;
+  background: transparent;
+  color: transparent;
+  font-size: 16px; /* avoids iOS focus-zoom */
   -webkit-appearance: none;
   appearance: none;
-  background: transparent;
+  z-index: 2;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
@@ -256,6 +257,7 @@ input[type="date"]::-webkit-clear-button {
   -webkit-appearance: none;
   appearance: none;
 }
+input[type="date"]::-webkit-date-and-time-value { color: transparent; }
 .composer__add {
   flex-shrink: 0;
   width: 54px;
@@ -391,6 +393,7 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 
 /* Due badge */
 .task__due {
+  position: relative;
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
@@ -414,19 +417,9 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
   background: transparent;
   color: var(--text-faint);
   border-color: var(--border-strong);
-  opacity: 0;
-  height: 0;
-  padding: 0;
-  overflow: hidden;
-  pointer-events: none;
+  opacity: 0.6;
 }
-.task:hover .task__due.is-empty,
-.task:focus-within .task__due.is-empty {
-  opacity: 1;
-  height: auto;
-  padding: 5px 9px;
-  pointer-events: auto;
-}
+.task:hover .task__due.is-empty { opacity: 1; }
 .task.completed .task__due { opacity: 0.5; filter: grayscale(0.4); }
 
 /* Drag handle */

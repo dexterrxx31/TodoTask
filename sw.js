@@ -1,5 +1,5 @@
 // Service worker for offline support + PWA installability
-const CACHE = "tasks-cache-v2";
+const CACHE = "tasks-cache-v3";
 const ASSETS = [
   "./",
   "./index.html",
